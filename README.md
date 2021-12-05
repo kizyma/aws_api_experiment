@@ -5,6 +5,8 @@ AWS-based API, serverless, Dynamo DB, Pydantic
 * make sure NPM is installed on your system
 * npm init
 * accept defalut settings, press "Enter"
+* npm config set prefix /usr/local (macOS/Ubuntu "fix" for path)
+* in case of some permission issues - sudo chown -R $USER /usr/local/lib
 * npm install -g serverless
 * serverless -version (to check whether it is installed correctly)
 * npm install --save serverless-python-requirements
