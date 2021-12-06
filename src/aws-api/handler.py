@@ -23,6 +23,8 @@ def create(event, context):
     post_str = event['body']
     try:
         event = GenericEvent.parse_raw(post_str)
+        event_to_dict = {"event_id": event.event_id, "event_name": event.name, "status": event.status,
+                         "start_date": event.start_date, "end_date": event.end_date}
     except ValidationError:
         response = {
             "statusCode": 400,
@@ -31,7 +33,7 @@ def create(event, context):
         }
 
     res = dynamodb.put_item(
-        TableName=table_name, Item=dynamo_db_serializer.to_item(event))
+        TableName=table_name, Item=dynamo_db_serializer.to_item(event_to_dict))
 
     # If creation is successful
     if res['ResponseMetadata']['HTTPStatusCode'] == 200:
