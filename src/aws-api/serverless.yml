@@ -27,9 +27,8 @@ provider:
 
 
 functions:
-"""
-Handler endpoints, self-explanatory
-"""
+# Handler endpoints, self-explanatory
+
   create:
     handler: handler.create
     events:
