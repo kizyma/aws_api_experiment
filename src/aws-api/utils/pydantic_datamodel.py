@@ -17,9 +17,13 @@ class GenericEvent(BaseModel):
     status: str
     event_id: int
 
-    # custom input conversion for that field
-    _normalize_datetimes = validator(
-        ["start_date", "end_date"],
+    # custom input conversion for certain field
+    _normalize_start_date = validator(
+        "start_date",
+        allow_reuse=True)(transform_to_utc_datetime)
+
+    _normalize_start_date = validator(
+        "end_date",
         allow_reuse=True)(transform_to_utc_datetime)
 
     class Config:
