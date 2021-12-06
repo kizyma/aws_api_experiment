@@ -2,8 +2,8 @@ import json
 import logging
 import boto3
 import datetime
-from src.utils import dynamo_db_serializer
-from src.utils.pydantic_datamodel import GenericEvent
+from utils import dynamo_db_serializer
+from utils.pydantic_datamodel import GenericEvent
 from pydantic import ValidationError
 
 logger = logging.getLogger()
