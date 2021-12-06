@@ -75,14 +75,14 @@ resources:
           AttributeDefinitions:
             - AttributeName: event_id
               AttributeType: N
-            - AttributeName: event_name
-              AttributeType: S
-            - AttributeName: status
-              AttributeType: S
-            - AttributeName: start_date
-              AttributeType: S
-            - AttributeName: end_date
-              AttributeType: S
+#            - AttributeName: event_name
+#              AttributeType: S
+#            - AttributeName: status
+#              AttributeType: S
+#            - AttributeName: start_date
+#              AttributeType: S
+#            - AttributeName: end_date
+#              AttributeType: S
 
           KeySchema:
             - AttributeName: event_id
