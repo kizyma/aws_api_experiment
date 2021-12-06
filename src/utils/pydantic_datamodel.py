@@ -11,7 +11,6 @@ def transform_to_utc_datetime(dt: datetime) -> datetime:
 
 
 class GenericEvent(BaseModel):
-    # event_name, start_date, end_date, status, event_id
     event_name: str
     start_date: datetime
     end_date: datetime
