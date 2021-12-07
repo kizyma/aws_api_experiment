@@ -24,6 +24,13 @@ provider:
   name: aws
   runtime: python3.8
   lambdaHashingVersion: 20201221
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:*
+          Resource: "*"
 
 
 functions:
@@ -75,6 +82,7 @@ resources:
           AttributeDefinitions:
             - AttributeName: event_id
               AttributeType: N
+              # to remove after debug
 #            - AttributeName: event_name
 #              AttributeType: S
 #            - AttributeName: status
@@ -90,6 +98,7 @@ resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+
 
 plugins:
 - serverless-python-requirements
