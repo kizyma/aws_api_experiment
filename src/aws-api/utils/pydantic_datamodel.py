@@ -2,6 +2,9 @@ from pydantic import BaseModel, validator
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
+# Timedata format & conversion is subject to change and might be easily changed as per request
+# For now, I`m leaving these "as is", since I have no info on what proper DT structure is needed
+
 
 def convert_datetime_to_iso_8601_with_z_suffix(dt: datetime) -> str:
     return dt.strftime('%Y-%m-%dT%H:%M:%SZ')

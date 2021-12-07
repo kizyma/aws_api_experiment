@@ -64,7 +64,7 @@ functions:
           path: events/completed
           method: get
   all:
-    handler: handler.all
+    handler: handler.get_all
     events:
       - http:
           path: events/

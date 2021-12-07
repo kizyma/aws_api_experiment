@@ -2,8 +2,10 @@ import json
 import logging
 import boto3
 import datetime
+
+from boto3.dynamodb.conditions import Key, Attr
 from utils import dynamo_db_serializer
-from utils.pydantic_datamodel import GenericEvent
+from utils.pydantic_datamodel import GenericEvent, convert_datetime_to_iso_8601_with_z_suffix
 from pydantic import ValidationError
 
 logger = logging.getLogger()
@@ -40,5 +42,29 @@ def create(event, context):
         response = {
             "statusCode": 201,
         }
+
+    return response
+
+
+def get_all(event, context):
+    # Set the default error response
+    response = {
+        "statusCode": 500,
+        "body": "An error occured while getting all posts."
+    }
+    now_str = convert_datetime_to_iso_8601_with_z_suffix(datetime.utcnow())
+    day_ago_str = convert_datetime_to_iso_8601_with_z_suffix(datetime.utcnow() - datetime.timedelta(hours=24))
+
+    fe = Key('end_date').between(day_ago_str, now_str);
+    scan_result = dynamodb.scan(TableName=table_name, FilterExpression=fe)
+    posts = []
+
+    for item in scan_result:
+        posts.append(dynamo_db_serializer.to_dict(item))
+
+    response = {
+        "statusCode": 200,
+        "body": json.dumps(posts)
+    }
 
     return response
