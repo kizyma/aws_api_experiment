@@ -11,6 +11,10 @@ def transform_to_utc_datetime(dt: datetime) -> datetime:
     return dt.astimezone(tz=timezone.utc)
 
 
+def convert_string_to_dt_object(datetime_str) -> datetime:
+    return datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%SZ')
+
+
 class GenericEvent(BaseModel):
     # In this particular case only necessary data for user to provide - is event_id
     # This was made for two reasons - it is much easier to create valid test data this way,
@@ -34,25 +38,30 @@ class GenericEvent(BaseModel):
     class Config:
         json_encoders = {
             # custom output conversion for datetime
-            datetime: convert_datetime_to_iso_8601_with_z_suffix
+            datetime: convert_string_to_dt_object
         }
+
         validate_assignment = True
 
+    # Following code won't be used on prod, unless such functionality is needed.
+    # It is somewhat resource-consuming.
     # Decorators with default values setters
-    @validator('status')
+    @validator('status', pre=True, always=True)
     def set_event_status(cls, status):
-        return status or 'completed'
+        placeholder_status = 'completed'
+        return status or placeholder_status
 
-    @validator('event_name')
+    @validator('event_name', pre=True, always=True)
     def set_event_name(cls, name):
-        return name or 'Generic Test Event'
+        placeholder_event_name = 'Generic Test Event'
+        return name or placeholder_event_name
 
-    @validator('start_date')
+    @validator('start_date', pre=True, always=True)
     def set_start_date(cls, start_date):
         generic_start_time = datetime.now() - timedelta(hours=1)
         return start_date or generic_start_time
 
-    @validator('end_date')
+    @validator('end_date', pre=True, always=True)
     def set_end_date(cls, end_date):
         generic_end_time = datetime.now()
         return end_date or generic_end_time

@@ -24,7 +24,7 @@ def create(event, context):
     try:
         event = GenericEvent.parse_raw(post_str)
         event_to_dict = {"event_id": event.event_id, "event_name": event.event_name, "status": event.status,
-                         "start_date": event.start_date, "end_date": event.end_date}
+                         "start_date": str(event.start_date), "end_date": str(event.end_date)}
     except ValidationError:
         response = {
             "statusCode": 400,
