@@ -6,8 +6,8 @@ from typing import Optional
 # For now, I`m leaving these "as is", since I have no info on what proper DT structure is needed
 
 
-def convert_datetime_to_iso_8601_with_z_suffix(dt: datetime) -> str:
-    return dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+# def convert_datetime_to_iso_8601_with_z_suffix(dt: datetime) -> str:
+#     return dt.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def transform_to_utc_datetime(dt: datetime) -> datetime:
@@ -15,7 +15,7 @@ def transform_to_utc_datetime(dt: datetime) -> datetime:
 
 
 def convert_string_to_dt_object(datetime_str) -> datetime:
-    return datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%SZ')
+    return datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
 
 
 class GenericEvent(BaseModel):
@@ -34,7 +34,7 @@ class GenericEvent(BaseModel):
         "start_date",
         allow_reuse=True)(transform_to_utc_datetime)
 
-    _normalize_start_date = validator(
+    _normalize_end_date = validator(
         "end_date",
         allow_reuse=True)(transform_to_utc_datetime)
 
