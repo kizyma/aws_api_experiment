@@ -5,7 +5,7 @@ import datetime
 
 from boto3.dynamodb.conditions import Key, Attr
 from utils import dynamo_db_serializer
-from utils.pydantic_datamodel import GenericEvent
+from utils.pydantic_datamodel import GenericEvent, utc_timestamp
 from pydantic import ValidationError
 
 logger = logging.getLogger()
@@ -33,21 +33,21 @@ def create(event, context):
     try:
         event = GenericEvent.parse_raw(post_str)
         event_to_dict = {"event_id": event.event_id, "event_name": event.event_name, "status": event.status,
-                         "start_date": event.start_date.isoformat(), "end_date": event.end_date.isoformat()}
+                         "start_date": event.start_date.isoformat(), "end_date": event.end_date.isoformat(),
+                         "timestamp": utc_timestamp(event.end_date)}
+        res = dynamodb_client.put_item(
+            TableName=table_name, Item=dynamo_db_serializer.to_item(event_to_dict))
+
+        # If creation is successful
+        if res['ResponseMetadata']['HTTPStatusCode'] == 200:
+            response = {
+                "statusCode": 201,
+            }
     except ValidationError:
         response = {
             "statusCode": 400,
             "body": "Bad Request. Data validation has been failed."
                     "Please check input data types & make sure they correspond to the requirements."
-        }
-
-    res = dynamodb_client.put_item(
-        TableName=table_name, Item=dynamo_db_serializer.to_item(event_to_dict))
-
-    # If creation is successful
-    if res['ResponseMetadata']['HTTPStatusCode'] == 200:
-        response = {
-            "statusCode": 201,
         }
 
     return response
