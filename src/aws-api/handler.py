@@ -62,7 +62,7 @@ def get_all(event, context):
     now_dt = datetime.datetime.utcnow()
     day_ago_dt = now_dt - datetime.timedelta(hours=24)
     response = table.query(
-        IndexName='timeEventsIndex',
+        IndexName='timestampEndIndex',
         KeyConditionExpression=Key('end_date').between(day_ago_dt.isoformat(), now_dt.isoformat())
     )
 

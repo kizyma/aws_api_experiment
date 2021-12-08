@@ -87,6 +87,8 @@ resources:
               AttributeType: S
             - AttributeName: end_date
               AttributeType: S
+            - AttributeName: timestamp
+              AttributeType: N
           KeySchema:
             - AttributeName: event_id
               KeyType: HASH
@@ -113,20 +115,17 @@ resources:
               ProvisionedThroughput:
                 ReadCapacityUnits: 1
                 WriteCapacityUnits: 1
-#              NON-VALID, ONLY 2 elements per schema
-#            - IndexName: statusEventsIndex
-#              KeySchema:
-#                - AttributeName: event_id
-#                  KeyType: HASH
-#                - AttributeName: end_date
-#                  KeyType: RANGE
-#                - AttributeName: status
-#                  KeyType: RANGE
-#              Projection:
-#                ProjectionType: 'ALL'
-#              ProvisionedThroughput:
-#                ReadCapacityUnits: 1
-#                WriteCapacityUnits: 1
+            - IndexName: timestampEndIndex
+              KeySchema:
+                - AttributeName: timestamp
+                  KeyType: HASH
+                - AttributeName: end_date
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: 'ALL'
+              ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
