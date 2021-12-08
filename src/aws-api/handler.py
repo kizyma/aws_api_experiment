@@ -61,18 +61,18 @@ def get_all(event, context):
     }
     now_dt = datetime.datetime.utcnow()
     day_ago_dt = now_dt - datetime.timedelta(hours=24)
-    # response = table.query(
-    # WON`T WORK, BECAUSE TO QUERY I NEEDED END DATE TO BE SOME SORT OF KEY,
-    #     KeyConditionExpression=Key('end_date').between(day_ago_dt, now_dt)
-    # )
+    response = table.query(
+        # WON`T WORK, BECAUSE TO QUERY I NEEDED END DATE TO BE SOME SORT OF KEY,
+        KeyConditionExpression=Key('end_date').between(day_ago_dt.isoformat(), now_dt.isoformat())
+    )
 
-    # fe = Key('end_date').between(day_ago_dt,
-    #                              now_dt)
-    fe = f"end_date BETWEEN :{day_ago_dt.isoformat()} and {now_dt.isoformat()}"
-    scan_result = dynamodb_client.scan(TableName=table_name, FilterExpression=fe)
+    fe = Key('end_date').between(day_ago_dt,
+                                 now_dt)
+    # fe = f"end_date BETWEEN :{day_ago_dt.isoformat()} and {now_dt.isoformat()}"
+    # scan_result = dynamodb_client.scan(TableName=table_name, FilterExpression=fe)
     posts = []
 
-    for item in scan_result:
+    for item in fe:
         posts.append(dynamo_db_serializer.to_dict(item))
 
     response = {

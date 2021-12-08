@@ -15,7 +15,7 @@ def transform_to_utc_datetime(dt: datetime) -> datetime:
 
 
 def convert_string_to_dt_object(datetime_str) -> datetime:
-    return datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+    return datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S').astimezone(tz=timezone.utc)
 
 
 class GenericEvent(BaseModel):
@@ -62,9 +62,9 @@ class GenericEvent(BaseModel):
     @validator('start_date', pre=True, always=True)
     def set_start_date(cls, start_date):
         generic_start_time = datetime.now() - timedelta(hours=1)
-        return start_date or generic_start_time
+        return start_date or generic_start_time.astimezone(tz=timezone.utc)
 
     @validator('end_date', pre=True, always=True)
     def set_end_date(cls, end_date):
         generic_end_time = datetime.now()
-        return end_date or generic_end_time
+        return end_date or generic_end_time.astimezone(tz=timezone.utc)
