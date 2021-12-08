@@ -83,19 +83,50 @@ resources:
           AttributeDefinitions:
             - AttributeName: event_id
               AttributeType: N
-              # to remove after debug
-#            - AttributeName: event_name
-#              AttributeType: S
-#            - AttributeName: status
-#              AttributeType: S
-#            - AttributeName: start_date
-#              AttributeType: S
-#            - AttributeName: end_date
-#              AttributeType: S
-
+            - AttributeName: status
+              AttributeType: S
+            - AttributeName: end_date
+              AttributeType: S
           KeySchema:
             - AttributeName: event_id
               KeyType: HASH
+          GlobalSecondaryIndexes:
+            - IndexName: allEventsIndex
+              KeySchema:
+                - AttributeName: event_id
+                  KeyType: HASH
+                - AttributeName: end_date
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: 'ALL'
+              ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
+            - IndexName: timeEventsIndex
+              KeySchema:
+                - AttributeName: end_date
+                  KeyType: HASH
+                - AttributeName: event_id
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: 'ALL'
+              ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
+#              NON-VALID, ONLY 2 elements per schema
+#            - IndexName: statusEventsIndex
+#              KeySchema:
+#                - AttributeName: event_id
+#                  KeyType: HASH
+#                - AttributeName: end_date
+#                  KeyType: RANGE
+#                - AttributeName: status
+#                  KeyType: RANGE
+#              Projection:
+#                ProjectionType: 'ALL'
+#              ProvisionedThroughput:
+#                ReadCapacityUnits: 1
+#                WriteCapacityUnits: 1
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
