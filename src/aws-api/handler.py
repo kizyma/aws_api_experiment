@@ -52,10 +52,12 @@ def get_all(event, context):
         "statusCode": 500,
         "body": "An error occured while getting all posts."
     }
-    now_str = convert_datetime_to_iso_8601_with_z_suffix(datetime.utcnow())
-    day_ago_str = convert_datetime_to_iso_8601_with_z_suffix(datetime.utcnow() - datetime.timedelta(hours=24))
-
-    fe = Key('end_date').between(day_ago_str, now_str);
+    now_dt = datetime.datetime.utcnow()
+    day_ago_dt = convert_datetime_to_iso_8601_with_z_suffix(now_dt - datetime.timedelta(hours=24))
+    now_dt = convert_datetime_to_iso_8601_with_z_suffix(now_dt)
+    day_ago_dt = convert_datetime_to_iso_8601_with_z_suffix(day_ago_dt)
+    fe = Key('end_date').between(convert_datetime_to_iso_8601_with_z_suffix(day_ago_dt),
+                                 convert_datetime_to_iso_8601_with_z_suffix(now_dt))
     scan_result = dynamodb.scan(TableName=table_name, FilterExpression=fe)
     posts = []
 
