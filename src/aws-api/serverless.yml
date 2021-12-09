@@ -1,23 +1,5 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: aws-api
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
 frameworkVersion: '2'
 
 provider:
@@ -44,34 +26,13 @@ functions:
           path: events/create
           method: post
 
-  get_active:
-    handler: handler.get_active
+  get_by_status:
+    handler: handler.get_by_status
     events:
       - http:
-          path: events/active
+          path: events/{status_param}
           method: get
 
-  get_inactive:
-    handler: handler.get_inactive
-    events:
-      - http:
-          path: events/inactive
-          method: get
-
-  get_completed:
-    handler: handler.get_completed
-    events:
-      - http:
-          path: events/completed
-          method: get
-  all:
-    handler: handler.get_all
-    events:
-      - http:
-          path: events/
-          method: get
-
-#active inactive completed, all - everything for the last 24 hrs
 
 resources:
     Resources:

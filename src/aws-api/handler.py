@@ -7,7 +7,6 @@ from botocore.exceptions import ClientError
 from utils import dynamo_db_serializer
 from utils.pydantic_datamodel import GenericEvent, utc_timestamp
 from pydantic import ValidationError
-from itertools import chain
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -20,6 +19,8 @@ dynamodb_client = boto3.client('dynamodb')
 # Creating the DynamoDB Table Resource
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(table_name)
+
+ALL_AVAILABLE_STATUSES = ['active', 'inactive', 'completed']
 
 
 def create(event, context):
@@ -86,20 +87,16 @@ def _get_events_by_status(status) -> list:
     return events
 
 
-def get_all(event, context):
+def _get_all():
     """
-    Function to retrieve all events. Make 3 separate calls, to get all known event statuses, then chain lists with events
-    via itertools.chain
-    :param event:
-    :param context:
-    :return:
+    Function to retrieve all events. Make several calls, to get all known event statuses and then return unified list
+    :return: response with all lists
     """
     try:
-        completed_events = _get_events_by_status('completed')
-        active_events = _get_events_by_status('active')
-        inactive_events = _get_events_by_status('inactive')
-        all_events = list(chain(completed_events, active_events, inactive_events))
-
+        all_events = []
+        for status in ALL_AVAILABLE_STATUSES:
+            event_list = _get_events_by_status(status)
+            all_events += event_list
         response = {
             "statusCode": 200,
             "body": json.dumps(all_events)
@@ -113,70 +110,20 @@ def get_all(event, context):
     return response
 
 
-def get_active(event, context):
-    """
-    Self-explanatory, retrieves events with "active" status
-    :param event:
-    :param context:
-    :return:
-    """
+def get_by_status(events, context):
     try:
-        active_events = _get_events_by_status('active')
-
-        response = {
-            "statusCode": 200,
-            "body": json.dumps(active_events)
-        }
-    except ClientError:
-        response = {
-            "statusCode": 500,
-            "body": "An error occurred while getting active events."
-        }
-
-    return response
-
-
-def get_inactive(event, context):
-    """
-    Self-explanatory, retrieves events with "inactive" status
-    :param event:
-    :param context:
-    :return:
-    """
-    try:
-        inactive_events = _get_events_by_status('inactive')
-
-        response = {
-            "statusCode": 200,
-            "body": json.dumps(inactive_events)
-        }
-    except ClientError:
-        response = {
-            "statusCode": 500,
-            "body": "An error occurred while getting inactive events."
-        }
-
-    return response
-
-
-def get_completed(event, context):
-    """
-    Self-explanatory, retrieves events with "completed" status
-    :param event:
-    :param context:
-    :return:
-    """
-    try:
-        completed_events = _get_events_by_status('completed')
-
-        response = {
-            "statusCode": 200,
-            "body": json.dumps(completed_events)
-        }
-    except ClientError:
-        response = {
-            "statusCode": 500,
-            "body": "An error occurred while getting completed events."
-        }
-
+        status = events['pathParameters']['status_param']
+        try:
+            selected_events = _get_events_by_status(status)
+            response = {
+                "statusCode": 200,
+                "body": json.dumps(selected_events)
+            }
+        except ClientError:
+            response = {
+                "statusCode": 500,
+                "body": "An error occurred while getting active events."
+            }
+    except TypeError:
+        response = _get_all()
     return response
