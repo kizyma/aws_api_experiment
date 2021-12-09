@@ -1,8 +1,11 @@
 from pprint import pprint
 import unittest
 import boto3
+import datetime
+
 from botocore.exceptions import ClientError
 from moto import mock_dynamodb2
+from utils.pydantic_datamodel import convert_string_to_dt_object
 
 
 @mock_dynamodb2
@@ -30,9 +33,11 @@ class TestDatabaseFunctions(unittest.TestCase):
             self.assertIn('events', self.table.name)
 
     def test_put_event(self):
-        from create_mock_event import put_event
-        result = put_event("The Big New Movie", 2015,
-                           "Nothing happens at all.", 0, self.dynamodb)
+        from put_mock_event import put_event
+        result = put_event(1, "Generic Test Event", "completed",
+                           convert_string_to_dt_object("2021-12-06 17:27:04").isoformat(),
+                           convert_string_to_dt_object("2021-12-06 18:27:04").isoformat(),
+                           self.dynamodb)
         self.assertEqual(200, result['ResponseMetadata']['HTTPStatusCode'])
 
 

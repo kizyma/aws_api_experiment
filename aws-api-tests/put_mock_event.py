@@ -22,7 +22,7 @@ def put_event(event_id, event_name, status, start_date, end_date, dynamodb=None)
 
 
 if __name__ == '__main__':
-    movie_resp = put_event(1, "Generic Test Event", "completed", convert_string_to_dt_object("2021-12-06 17:27:04"),
-                           convert_string_to_dt_object("2021-12-06 18:27:04"), 0)
+    event_resp = put_event(1, "Generic Test Event", "completed", convert_string_to_dt_object("2021-12-06 17:27:04"),
+                           convert_string_to_dt_object("2021-12-06 18:27:04"))
     print("Put event succeeded:")
-    pprint(movie_resp, sort_dicts=False)
+    pprint(event_resp, sort_dicts=False)
