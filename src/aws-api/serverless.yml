@@ -93,33 +93,11 @@ resources:
             - AttributeName: event_id
               KeyType: HASH
           GlobalSecondaryIndexes:
-            - IndexName: allEventsIndex
+            - IndexName: statusTimestampIndex
               KeySchema:
-                - AttributeName: event_id
+                - AttributeName: status
                   KeyType: HASH
-                - AttributeName: end_date
-                  KeyType: RANGE
-              Projection:
-                ProjectionType: 'ALL'
-              ProvisionedThroughput:
-                ReadCapacityUnits: 1
-                WriteCapacityUnits: 1
-            - IndexName: timeEventsIndex
-              KeySchema:
-                - AttributeName: end_date
-                  KeyType: HASH
-                - AttributeName: event_id
-                  KeyType: RANGE
-              Projection:
-                ProjectionType: 'ALL'
-              ProvisionedThroughput:
-                ReadCapacityUnits: 1
-                WriteCapacityUnits: 1
-            - IndexName: timestampEndIndex
-              KeySchema:
                 - AttributeName: timestamp
-                  KeyType: HASH
-                - AttributeName: end_date
                   KeyType: RANGE
               Projection:
                 ProjectionType: 'ALL'
