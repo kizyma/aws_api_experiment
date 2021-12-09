@@ -18,16 +18,14 @@ def create_event_table(dynamodb=None):
             {'AttributeName': 'timestamp', 'AttributeType': 'N'},
         ],
         'GlobalSecondaryIndexes': [
-            'KeySchema': [
-                {'IndexName': 'statusTimestampIndex'},
-                {'AttributeName': 'status', 'KeyType': 'HASH'},
-                {'AttributeName': 'timestamp', 'KeyType': 'RANGE'},
-                {'Projection': {'ProjectionType': 'ALL'}},
-            ],
-            'ProvisionedThroughput': {
+            {'IndexName': 'statusTimestampIndex'},
+            {'AttributeName': 'status', 'KeyType': 'HASH'},
+            {'AttributeName': 'timestamp', 'KeyType': 'RANGE'},
+            {'Projection': {'ProjectionType': 'ALL'}},
+            {'ProvisionedThroughput': {
                 'ReadCapacityUnits': 1,
                 'WriteCapacityUnits': 1
-            }
+            }}
         ],
         'ProvisionedThroughput': {
             'ReadCapacityUnits': 1,
