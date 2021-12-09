@@ -14,19 +14,30 @@ def create_event_table(dynamodb=None):
         'AttributeDefinitions': [
             {'AttributeName': 'event_id', 'AttributeType': 'N'},
             {'AttributeName': 'status', 'AttributeType': 'S'},
-            {'AttributeName': 'end_date', 'AttributeType': 'S'},
+            # {'AttributeName': 'end_date', 'AttributeType': 'S'},
             {'AttributeName': 'timestamp', 'AttributeType': 'N'},
         ],
         'GlobalSecondaryIndexes': [
-            {'IndexName': 'statusTimestampIndex'},
-            {'AttributeName': 'status', 'KeyType': 'HASH'},
-            {'AttributeName': 'timestamp', 'KeyType': 'RANGE'},
-            {'Projection': {'ProjectionType': 'ALL'}},
-            {'ProvisionedThroughput': {
-                'ReadCapacityUnits': 1,
-                'WriteCapacityUnits': 1
-            }}
+            {
+                'IndexName': 'statusTimestampIndex',
+                'KeySchema': [
+                    {'AttributeName': "status", 'KeyType': "HASH"},
+                    {'AttributeName': "timestamp", 'KeyType': "RANGE"}
+                ],
+                # 'AttributeDefinitions': [
+                #     {'AttributeName': "status", 'AttributeType': "S"},
+                #     {'AttributeName': "timestamp", 'AttributeType': "N"}
+                # ],
+                'Projection': {
+                    'ProjectionType': 'ALL'
+                },
+                'ProvisionedThroughput': {
+                    'ReadCapacityUnits': 1,
+                    'WriteCapacityUnits': 1
+                }
+            }
         ],
+
         'ProvisionedThroughput': {
             'ReadCapacityUnits': 1,
             'WriteCapacityUnits': 1
