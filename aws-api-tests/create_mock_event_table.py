@@ -24,10 +24,6 @@ def create_event_table(dynamodb=None):
                     {'AttributeName': "status", 'KeyType': "HASH"},
                     {'AttributeName': "timestamp", 'KeyType': "RANGE"}
                 ],
-                # 'AttributeDefinitions': [
-                #     {'AttributeName': "status", 'AttributeType': "S"},
-                #     {'AttributeName': "timestamp", 'AttributeType': "N"}
-                # ],
                 'Projection': {
                     'ProjectionType': 'ALL'
                 },
@@ -48,3 +44,9 @@ def create_event_table(dynamodb=None):
     table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
     assert table.table_status == 'ACTIVE'
     return table
+
+
+if __name__ == '__main__':
+    event_table = create_event_table()
+    print("Table status:", event_table.table_status)
+
