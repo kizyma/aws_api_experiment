@@ -5,7 +5,7 @@ import datetime
 
 from botocore.exceptions import ClientError
 from moto import mock_dynamodb2
-from utils.pydantic_datamodel import convert_string_to_dt_object
+from utils.pydantic_datamodel import convert_string_to_dt_object, utc_timestamp
 
 
 @mock_dynamodb2
@@ -29,6 +29,7 @@ class TestDatabaseFunctions(unittest.TestCase):
         """
         Test if our mock table is ready
         """
+
         def test_table_exists(self):
             self.assertIn('events', self.table.name)
 
@@ -37,8 +38,27 @@ class TestDatabaseFunctions(unittest.TestCase):
         result = put_event(1, "Generic Test Event", "completed",
                            convert_string_to_dt_object("2021-12-06 17:27:04").isoformat(),
                            convert_string_to_dt_object("2021-12-06 18:27:04").isoformat(),
+                           utc_timestamp(convert_string_to_dt_object("2021-12-06 18:27:04")),
                            self.dynamodb)
         self.assertEqual(200, result['ResponseMetadata']['HTTPStatusCode'])
+
+    def test_get_event(self):
+        from put_mock_event import put_event
+        from get_mock_event import get_event
+        put_event(1, "Generic Test Event", "completed",
+                  convert_string_to_dt_object("2021-12-06 17:27:04").isoformat(),
+                  convert_string_to_dt_object("2021-12-06 18:27:04").isoformat(),
+                  utc_timestamp(convert_string_to_dt_object("2021-12-06 18:27:04")),
+                  self.dynamodb)
+        result = get_event(1, self.dynamodb)
+
+        self.assertEqual(1, result['event_id'])
+        self.assertEqual("Generic Test Event", result['event_name'])
+        self.assertEqual("completed", result['status'])
+        self.assertEqual("2021-12-06T15:27:04+00:00", result['start_date'])
+        self.assertEqual('2021-12-06T16:27:04+00:00', result['end_date'])
+        self.assertEqual(1638808024, result['timestamp'])
+
 
 
 if __name__ == '__main__':
