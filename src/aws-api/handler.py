@@ -33,8 +33,8 @@ def create(event, context):
     """
     logger.info(f'Incoming request is: {event}')
     response = {
-        "statusCode": 500,
-        "body": "An error occurred while creating post."
+        "statusCode": 400,
+        "body": "An error occurred while creating post. Please make sure incoming event has event_id field."
     }
     post_str = event['body']
     try:
