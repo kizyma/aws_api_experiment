@@ -20,14 +20,14 @@ functions:
 # Handler endpoints, self-explanatory
 
   create:
-    handler: handler.create
+    handler: aws-api/handler.create
     events:
       - http:
           path: events/create
           method: post
 
   get_by_status:
-    handler: handler.get_by_status
+    handler: aws-api/handler.get_by_status
     events:
       - http:
           path: events/{status_param}
