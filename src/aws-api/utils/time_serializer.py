@@ -1,5 +1,5 @@
 import calendar
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 
 # Timedata format & conversion is subject to change and might be easily changed as per request

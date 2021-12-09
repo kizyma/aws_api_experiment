@@ -6,7 +6,7 @@ from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from utils import dynamo_db_serializer
 from utils.pydantic_datamodel import GenericEvent
-from utils import time_serializer
+from utils.time_serializer import utc_timestamp
 from pydantic import ValidationError
 from itertools import chain
 
@@ -41,7 +41,7 @@ def create(event, context):
         event = GenericEvent.parse_raw(post_str)
         event_to_dict = {"event_id": event.event_id, "event_name": event.event_name, "status": event.status,
                          "start_date": event.start_date.isoformat(), "end_date": event.end_date.isoformat(),
-                         "timestamp": time_serializer.utc_timestamp(event.end_date)}
+                         "timestamp": utc_timestamp(event.end_date)}
         res = dynamodb_client.put_item(
             TableName=table_name, Item=dynamo_db_serializer.to_item(event_to_dict))
 
@@ -67,9 +67,9 @@ def _get_events_by_status(status) -> list:
     :return: list of retrieved events, already properly formatted
     """
     now_dt = datetime.datetime.utcnow()
-    now_timestamp = time_serializer.utc_timestamp(now_dt)
+    now_timestamp = utc_timestamp(now_dt)
     day_ago_dt = now_dt - datetime.timedelta(hours=24)
-    day_ago_timestamp = time_serializer.utc_timestamp(day_ago_dt)
+    day_ago_timestamp = utc_timestamp(day_ago_dt)
     response = table.query(
         IndexName='statusTimestampIndex',
         KeyConditionExpression=Key('status').eq(status) & Key('timestamp')
