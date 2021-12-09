@@ -1,0 +1,79 @@
+service: aws-api
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:*
+          Resource: "*"
+
+
+functions:
+# Handler endpoints, self-explanatory
+
+  create:
+    handler: handler.create
+    events:
+      - http:
+          path: events/create
+          method: post
+
+  get_by_status:
+    handler: handler.get_by_status
+    events:
+      - http:
+          path: events/{status_param}
+          method: get
+
+
+resources:
+    Resources:
+      eventsTable:
+        # DynamoDB Schema and our data structure
+        Type: AWS::DynamoDB::Table
+        Properties:
+          TableName: events
+          AttributeDefinitions:
+            - AttributeName: event_id
+              AttributeType: N
+            - AttributeName: status
+              AttributeType: S
+            - AttributeName: end_date
+              AttributeType: S
+            - AttributeName: timestamp
+              AttributeType: N
+          KeySchema:
+            - AttributeName: event_id
+              KeyType: HASH
+          GlobalSecondaryIndexes:
+            - IndexName: statusTimestampIndex
+              KeySchema:
+                - AttributeName: status
+                  KeyType: HASH
+                - AttributeName: timestamp
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: 'ALL'
+              ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+
+
+plugins:
+- serverless-python-requirements
+
+custom:
+  # Python is used in a dockerized environment when on non linux environments
+  pythonRequirements:
+    dockerizePip: non-linux
