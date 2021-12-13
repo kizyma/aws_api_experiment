@@ -2,6 +2,11 @@ service: aws-api
 
 frameworkVersion: '2'
 
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+
 provider:
   name: aws
   runtime: python3.8

@@ -23,7 +23,7 @@ table = dynamodb.Table(table_name)
 ALL_AVAILABLE_STATUSES = ['active', 'inactive', 'completed']
 
 
-def create(event, context):
+def create(event, context) -> json:
     """
     Function to create event from user input. In case some optional fields are missing - fill them out via pydantic.
     For more info on data model, validation and data serialization, please consult pydantic_datamodel module.
@@ -87,7 +87,7 @@ def _get_events_by_status(status) -> list:
     return events
 
 
-def _get_all():
+def _get_all() -> json:
     """
     Function to retrieve all events. Make several calls, to get all known event statuses and then return unified list
     :return: response with all lists
@@ -110,7 +110,12 @@ def _get_all():
     return response
 
 
-def get_by_status(events, context):
+def get_by_status(events, context) -> json:
+    """
+    :param events: receive parameter to parse and retrieve from event
+    :param context:
+    :return: json-response to a user, no aux./service fields
+    """
     try:
         status = events['pathParameters']['status_param']
         try:
@@ -122,7 +127,7 @@ def get_by_status(events, context):
         except ClientError:
             response = {
                 "statusCode": 500,
-                "body": "An error occurred while getting active events."
+                "body": "An error occurred while getting selected events."
             }
     except TypeError:
         response = _get_all()
