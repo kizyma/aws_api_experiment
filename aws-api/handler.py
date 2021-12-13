@@ -117,7 +117,11 @@ def get_by_status(events, context) -> json:
     :return: json-response to a user, no aux./service fields
     """
     try:
-        status = events['pathParameters']['status_param']
+        status = events.get('pathParameters', {}).get('status_param')
+    except (TypeError, AttributeError):
+        status = None
+
+    if status:
         try:
             selected_events = _get_events_by_status(status)
             response = {
@@ -129,6 +133,6 @@ def get_by_status(events, context) -> json:
                 "statusCode": 500,
                 "body": "An error occurred while getting selected events."
             }
-    except TypeError:
+    elif status is None:
         response = _get_all()
     return response
